@@ -156,6 +156,7 @@ function create_post_type() {
 			'capability_type' => 'post',
     )
   );
+	// Creates ability for users to submit their own custom taxonomy for the portfolio pieces.
 	register_taxonomy(
 		'Project Categories',
 		array('portfolio'),
