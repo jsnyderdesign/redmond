@@ -101,6 +101,113 @@ function redmond_widgets_init() {
 }
 add_action( 'widgets_init', 'redmond_widgets_init' );
 
+/** Adds portfolio custom post type **/
+add_action( 'init', 'create_post_type' );
+function create_post_type() {
+  register_post_type( 'portfolio',
+    array(
+      'labels' => array(
+				'name' => __( 'Portfolio', 'Post Type General Name', 'textdomain' ),
+				'singular_name' => __( 'Portfolio', 'Post Type Singular Name', 'textdomain' ),
+				'menu_name' => __( 'Portfolio', 'textdomain' ),
+				'name_admin_bar' => __( 'Portfolio', 'textdomain' ),
+				'archives' => __( 'Portfolio Archives', 'textdomain' ),
+				'attributes' => __( 'Portfolio Attributes', 'textdomain' ),
+				'parent_item_colon' => __( 'Parent Portfolio:', 'textdomain' ),
+				'all_items' => __( 'All Portfolio', 'textdomain' ),
+				'add_new_item' => __( 'Add New Portfolio', 'textdomain' ),
+				'add_new' => __( 'Add New', 'textdomain' ),
+				'new_item' => __( 'New Portfolio', 'textdomain' ),
+				'edit_item' => __( 'Edit Portfolio', 'textdomain' ),
+				'update_item' => __( 'Update Portfolio', 'textdomain' ),
+				'view_item' => __( 'View Portfolio', 'textdomain' ),
+				'view_items' => __( 'View Portfolio', 'textdomain' ),
+				'search_items' => __( 'Search Portfolio', 'textdomain' ),
+				'not_found' => __( 'Not found', 'textdomain' ),
+				'not_found_in_trash' => __( 'Not found in Trash', 'textdomain' ),
+				'featured_image' => __( 'Featured Image', 'textdomain' ),
+				'set_featured_image' => __( 'Set featured image', 'textdomain' ),
+				'remove_featured_image' => __( 'Remove featured image', 'textdomain' ),
+				'use_featured_image' => __( 'Use as featured image', 'textdomain' ),
+				'insert_into_item' => __( 'Insert into Portfolio', 'textdomain' ),
+				'uploaded_to_this_item' => __( 'Uploaded to this Portfolio', 'textdomain' ),
+				'items_list' => __( 'Portfolio list', 'textdomain' ),
+				'items_list_navigation' => __( 'Portfolio list navigation', 'textdomain' ),
+				'filter_items_list' => __( 'Filter Portfolio list', 'textdomain' ),
+      ),
+			'label' => __( 'Portfolio', 'textdomain' ),
+			'description' => __( '', 'textdomain' ),
+			'labels' => $labels,
+			'menu_icon' => '',
+			'supports' => array('title', 'editor', 'thumbnail', 'revisions', 'author', ),
+			'taxonomies' => array(),
+			'public' => true,
+			'show_ui' => true,
+			'show_in_menu' => true,
+			'menu_position' => 5,
+			'show_in_admin_bar' => true,
+			'show_in_nav_menus' => true,
+			'can_export' => true,
+			'has_archive' => true,
+			'hierarchical' => false,
+			'exclude_from_search' => false,
+			'show_in_rest' => true,
+			'publicly_queryable' => true,
+			'capability_type' => 'post',
+    )
+  );
+	register_taxonomy(
+		'Project Categories',
+		array('portfolio'),
+		array(
+				'hierarchical' => true, 'label' => 'Project Categories', 'singular_label' => 'Project Category', 'rewrite' => true)
+	);
+}
+
+
+/** Displays portfolio custom post types on the front-page.php **/
+function portfolio( $atts = null, $content = null, $tag = null ) {
+
+    $out = '';
+
+    $args = array(
+        'numberposts' => '6',
+        'post_status' => 'publish',
+        'post_type' => 'portfolio' ,
+    );
+
+    $recent = wp_get_recent_posts( $args );
+
+    if ( $recent ) {
+
+        $out .= '<section class="overview">';
+
+        $out .= '<h4>Recent Projects</h4>';
+
+        $out .= '<div class="overview">';
+
+        foreach ( $recent as $item ) {
+
+            $out .= '<a href="' . get_permalink( $item['ID'] ) . '">';
+            $out .= get_the_post_thumbnail( $item['ID'] );
+            $out .= '</a>';
+        }
+
+        $out .= '</div></section>';
+    }
+
+    if ( $tag ) {
+        return $out;
+    } else {
+        echo $out;
+    }
+
+}
+/** Adds ability to call function through shortcode **/
+add_shortcode( 'recentposts', 'portfolio' );
+
+
+
 /**
  * Enqueue scripts and styles.
  */
